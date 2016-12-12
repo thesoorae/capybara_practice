@@ -1,0 +1,16 @@
+<h2>Edit Goal</h2>
+
+<form action="<%= goal_url(@goal) %>" method="post">
+  <%= auth_token %>
+  <label>Goal
+    <input type="text" name="goal[goal_text]" value="<%= @goal.goal_text %>">
+
+  </label>
+  <label>Visibility
+    <select name="goal[visibility]">
+      <option value="Public" <%= "selected" if @goal.visibility == "Public" %>>Public</option>
+      <option value="Private" <%= "selected" if @goal.visibility == "Private" %>>Private</option>
+    </select>
+  </label>
+  <input type="submit" value="Update Goal">
+</form>

@@ -1,0 +1,27 @@
+<h2>My Goals</h2>
+
+<ul>
+  <% @user.goals.each do |goal| %>
+    <li><%= goal.goal_text %></li>
+    <li><%= button_to "Edit Goal", edit_goal_url(goal), method: :get %></li>
+    <li><%= button_to "Delete Goal", goal_url(goal), method: :delete %></li>
+  <% end %>
+</ul>
+
+<h3>New Goal</h3>
+
+<form action="<%= goals_url %>" method="post">
+  <%= auth_token %>
+  <input type="hidden" name="goal[user_id]" value="<%= @user.id %>">
+  <label>Goal
+    <input type="text" name="goal[goal_text]" >
+
+  </label>
+  <label>Visibility
+    <select name="goal[visibility]">
+      <option value="Public">Public</option>
+      <option value="Private">Private</option>
+    </select>
+  </label>
+  <input type="submit" value="Create Goal">
+</form>

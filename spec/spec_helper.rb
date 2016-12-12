@@ -96,4 +96,17 @@ RSpec.configure do |config|
   # as the one that triggered the failure.
   Kernel.srand config.seed
 =end
+
+  def create_goal
+    user1 = create(:user)
+    visit new_session_url
+    fill_in "Username", :with => user1.username
+    fill_in "Password", :with => user1.password
+    click_on "Log In"
+
+    visit user_url(user1)
+    fill_in("Goal", :with => "this is my goal")
+    select('Private', :from => 'Visibility')
+    click_on "Create Goal"
+  end
 end
