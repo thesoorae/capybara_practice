@@ -93,7 +93,7 @@ end
 
 feature "user can mark a goal as completed" do
   before(:each) do create_three_goals
-  end 
+  end
 
   scenario "page contains button for completed goal" do
     expect(page).to have_button("Mark as Completed", count: 3)

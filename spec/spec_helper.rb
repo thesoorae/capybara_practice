@@ -135,5 +135,9 @@ RSpec.configure do |config|
     click_on "Log In"
   end
 
-    
+    def visit_other_user
+      create_new_user
+      visit user_url(User.first)
+
+    end
 end

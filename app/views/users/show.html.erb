@@ -16,6 +16,16 @@
   <% @user.goals.each do |goal| %>
   <% next if goal.user != current_user && goal.visibility == "Private" || goal.completed%>
     <li><%= goal.goal_text %></li>
+    <li><%= button_to "Comment on this Goal", new_goal_goal_comment_url(goal), method: :get %></li>
+    <% if goal.goal_comments %>
+    <ul>
+      <% goal.goal_comments.each do |comment| %>
+      <li><%= comment.body %></li>
+      <% end  %>
+    </ul>
+    <% end %>
+    <li><%= button_to "View Comments on this Goal", goal_goal_comments_url(goal), method: :get %></li>
+
     <% if goal.user == current_user %>
       <li><%= button_to "Mark as Completed", complete_goal_url(goal) %></li>
       <li><%= button_to "Edit Goal", edit_goal_url(goal), method: :get %></li>
@@ -24,6 +34,15 @@
   <% end %>
 </ul>
 
+<% if @user.user_comments %>
+<h3>Comments about you </h3>
+
+<ul>
+<% @user.user_comments.each do |comment| %>
+<li><%= comment.body %></li>
+<% end %>
+</ul>
+<% end %>
 <h3>New Goal</h3>
 
 <form action="<%= goals_url %>" method="post">
@@ -40,6 +59,17 @@
     </select>
   </label>
   <input type="submit" value="Create Goal">
+</form>
+
+<h3>Comment on this User</h3>
+
+<form action="<%= user_comments_url %>" method="post">
+  <%= auth_token %>
+  <label>Comment
+    <input type="text" name="user_comment[body]">
+  </label>
+  <input type="submit" value="Make Comment">
+  <input type="hidden" name="user_comment[user_id]" value=" <%= @user.id %>">
 </form>
 
 <%= link_to "Users", users_url %>
