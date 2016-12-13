@@ -18,11 +18,19 @@ class GoalsController < ApplicationController
     else
       flash.now[:errors] = @goal.errors.full_messages
       render :edit
-    end 
+    end
   end
 
   def destroy
+    @goal = Goal.find(params[:id])
+    flash[:errors] = @goal.errors.full_messages unless @goal.destroy
+    redirect_to user_url(@goal.user)
+  end
 
+  def complete
+    @goal = Goal.find(params[:id])
+    @goal.update_attributes(completed: true)
+    redirect_to user_url(@goal.user)
   end
 
   private

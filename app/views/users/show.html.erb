@@ -1,10 +1,26 @@
 <h2>My Goals</h2>
 
+<%= @user.username %>
+
+<% if @user.completed_goals %>
+<h3>Completed Goals</h3>
+<ul>
+  <% @user.completed_goals.each do |c_goal| %>
+  <li><%= c_goal.goal_text %></li>
+  <% end %>
+  </ul>
+<% end %>
+
+<h3>Incomplete Goals</h3>
 <ul>
   <% @user.goals.each do |goal| %>
+  <% next if goal.user != current_user && goal.visibility == "Private" || goal.completed%>
     <li><%= goal.goal_text %></li>
-    <li><%= button_to "Edit Goal", edit_goal_url(goal), method: :get %></li>
-    <li><%= button_to "Delete Goal", goal_url(goal), method: :delete %></li>
+    <% if goal.user == current_user %>
+      <li><%= button_to "Mark as Completed", complete_goal_url(goal) %></li>
+      <li><%= button_to "Edit Goal", edit_goal_url(goal), method: :get %></li>
+      <li><%= button_to "Delete Goal", goal_url(goal), method: :delete %></li>
+    <% end %>
   <% end %>
 </ul>
 
@@ -25,3 +41,5 @@
   </label>
   <input type="submit" value="Create Goal">
 </form>
+
+<%= link_to "Users", users_url %>

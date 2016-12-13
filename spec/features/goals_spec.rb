@@ -11,7 +11,7 @@ feature "user adds a goal" do
     expect(page).to have_content "New Goal"
   end
   scenario "goal appears on the page when added" do
-    expect(page).to have_content "this is my goal"
+    expect(page).to have_content "this is my private goal"
   end
   scenario "redirects to user's goals page" do
     expect(page).to have_content "My Goals"
@@ -22,14 +22,14 @@ feature "user can update a goal" do
   before(:each) do
     create_goal
     click_on "Edit Goal"
-    save_and_open_page
   end
   scenario "has an update goal form" do
     expect(page).to have_content "Edit Goal"
   end
 
   scenario "form has goal info pre-filled" do
-    expect(page).to have_content "this is my goal"
+    val = find_field('Goal').value
+    expect(val).to eq("this is my private goal")
   end
   scenario "redirects to user's goals page" do
     fill_in "Goal", :with => "this is my new goal"
@@ -44,22 +44,62 @@ feature "user can update a goal" do
 end
 
 feature "user can view all their goals" do
-  scenario "user's goals page contains public and private goals"
-  scenario "goals page doesn't show completed goals"
+      before(:each) do
+        create_public_goal
+      end
+
+  scenario "user's goals page contains public and private goals" do
+    expect(page).to have_content "this is my public goal"
+    expect(page).to have_content "this is my private goal"
+  end
 end
 
 feature "user can remove a goal" do
-  scenario "page contains a delete button for each goal"
-  scenario "goal is no longer listed after deletion"
+  before(:each) do
+    create_three_goals
+  end
+  scenario "page contains a delete button for each goal" do
+    expect(page).to have_button("Delete Goal", count: 3)
+    click_on("Delete Goal", match: :first)
+    expect(page).to have_button("Delete Goal", count: 2)
+  end
+  scenario "goal is no longer listed after deletion" do
+    click_on("Delete Goal", match: :first)
+    expect(page).to_not have_content "this is my private goal"
+  end
 end
 
 feature "other users can see public goals" do
-  scenario "each page has a link to all the users"
-  scenario "private goals do not appear to other users"
-  scenario "all public goals are listed"
+  before(:each) do
+    create_new_user
+  end
+
+  scenario "each page has a link to all the users" do
+
+    expect(page).to have_link("Users")
+  end
+  scenario "private goals do not appear to other users" do
+    visit user_url(User.first)
+    expect(page).to_not have_content("this is my private goal")
+  end
+
+  scenario "all public goals are listed" do
+    visit user_url(User.first)
+    expect(page).to have_content("this is my public goal")
+    expect(page).to have_content("third goal")
+  end
+
 end
 
 feature "user can mark a goal as completed" do
-  scenario "page contains button for completed goal"
-  scenario "completed goals appear under list titled Completed Goals"
+  before(:each) do create_three_goals
+  end 
+
+  scenario "page contains button for completed goal" do
+    expect(page).to have_button("Mark as Completed", count: 3)
+  end
+  scenario "completed goals appear under list titled Completed Goals" do
+    click_on "Mark as Completed", match: :first
+    expect(page).to have_content "Completed Goals"
+  end
 end

@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   after_initialize :ensure_session_token
 
   has_many :goals
-     
+
   attr_reader :password
 
   def self.find_by_credentials(username, password)
@@ -37,4 +37,7 @@ class User < ActiveRecord::Base
     bc.is_password?(password)
   end
 
+  def completed_goals
+    Goal.where(user_id: self.id, completed: true)
+  end
 end

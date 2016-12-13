@@ -97,6 +97,7 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 =end
 
+
   def create_goal
     user1 = create(:user)
     visit new_session_url
@@ -105,8 +106,34 @@ RSpec.configure do |config|
     click_on "Log In"
 
     visit user_url(user1)
-    fill_in("Goal", :with => "this is my goal")
+    fill_in("Goal", :with => "this is my private goal")
     select('Private', :from => 'Visibility')
     click_on "Create Goal"
   end
+
+  def create_public_goal
+    create_goal
+    fill_in("Goal", :with => "this is my public goal")
+    select('Public', :from => 'Visibility')
+    click_on "Create Goal"
+  end
+
+  def create_three_goals
+    create_public_goal
+    fill_in("Goal", :with => "third goal")
+    select('Public', :from => 'Visibility')
+    click_on "Create Goal"
+  end
+
+  def create_new_user
+    create_three_goals
+    click_on "Sign Out"
+    user2 = create(:user, username: "Droob")
+    visit new_session_url
+    fill_in "Username", :with => user2.username
+    fill_in "Password", :with => user2.password
+    click_on "Log In"
+  end
+
+    
 end
